@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python"
 # coding: utf-8
 # By Threezh1
@@ -245,45 +246,50 @@ def giveresult(urls, domian):
 
 
 def getUrlStatus(url):
-    URL = url
-    MyUa = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"   
-    headers = {'User-Agent': MyUa}
-    try:
-	    req = requests.get(URL, headers = headers, timeout=5, verify=False)
-	    r = BeautifulSoup(req.content,"html.parser",from_encoding="gb18030")
-	    sCode = req.status_code
-	    try:
-	        title = r.title.string
-	    except:
-	        title = "N/A"
+	URL = url
+	MyUa = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"   
+	headers = {'User-Agent': MyUa}
+	try:
+		req = requests.get(URL, headers = headers, timeout=5, verify=False)
+	except	Exception as result:
+		print(URL+" -- Connection Error!")
+		outFile.append({"URL":URL,"title":"N/A","Code":"N/A","bodySize":"N/A","API":"N/A"})
+		return outFile
 
-	    bodySize = len(req.content)
+	if req.apparent_encoding != None:
+		
+		encodeType = req.apparent_encoding
+		res = req.content.decode(encodeType,'ignore')
+	else:
+		res = req.text
+	r = BeautifulSoup(res,"html.parser")
 
-	    if '{"' == req.content.decode("utf-8", "ignore")[0:2]:
-	        apiData = True
-	    else:
-	        apiData = False
+	sCode = req.status_code
+	if r.title:
+		title = r.title.string
+	else:
+		title = "N/A"
 
-	    #print(req.content.decode("utf-8", "ignore")[0:2])
-	    print(URL+" -- title:"+title+" -- Code:",sCode," -- bodySize:",bodySize," -- API:",apiData)
+	bodySize = len(req.content)
 
-	    outFile.append({"URL":URL,"title":title,"Code":sCode,"bodySize":bodySize,"API":apiData})
+	if '{"' == req.content.decode("utf-8", "ignore")[0:2]:
+		apiData = True
+	else:
+		apiData = False
 
-    except:
-        print(URL+" -- Connection Error!")
+	print(URL+" -- title:"+title+" -- Code:",sCode," -- bodySize:",bodySize," -- API:",apiData)
 
-        outFile.append({"URL":URL,"title":"N/A","Code":"N/A","bodySize":"N/A","API":"N/A"})
-   
+	outFile.append({"URL":URL,"title":title,"Code":sCode,"bodySize":bodySize,"API":apiData})
 
-    return outFile
+	return outFile
 
 def GreateFile(outFile):
-    with open(Time+'.csv','w',newline='') as csvf:
-        fieldnames = ['URL','title','Code','bodySize','API']
-        writer = csv.DictWriter(csvf,fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(outFile)
-        print("\n文件"+Time+".csv"+"输出成功！")
+	with open(Time+'.csv','w',newline='',encoding='GB18030') as csvf:
+		fieldnames = ['URL','title','Code','bodySize','API']
+		writer = csv.DictWriter(csvf,fieldnames=fieldnames)
+		writer.writeheader()
+		writer.writerows(outFile)
+		print("\n文件"+Time+".csv"+"输出成功！")
 
 
 
