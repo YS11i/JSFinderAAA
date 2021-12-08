@@ -6,3 +6,5 @@ JSFinder魔改版
 * 运行结果：
 
 ![截图](https://github.com/msfisgood/JSFinderAAA/blob/main/image.png)
+
+* 原项目：https://github.com/Threezh1/JSFinder 
