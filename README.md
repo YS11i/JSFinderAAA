@@ -1,3 +1,5 @@
+# 同类型项目推荐https://github.com/pingc0y/URLFinder
+
 # JSFinderAAA
 JSFinder魔改版
 * 添加了简单的web请求，简单的API判断
